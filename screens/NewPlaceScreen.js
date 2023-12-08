@@ -2,6 +2,7 @@ import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import React, { useState } from "react";
 import { Button } from "react-native";
 import Colors from "../constants/Colors";
+
 const NewPlaceScreen = () => {
   const [titleValue, setTitleValue] = useState("");
   const titleChangeHandler = (text) => {
@@ -9,7 +10,7 @@ const NewPlaceScreen = () => {
     setTitleValue(text);
   };
   const savePlaceHandler = () => {
-    
+
   };
   return (
     <ScrollView>
