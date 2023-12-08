@@ -3,7 +3,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import PlaceItem from "../component/PlaceItem";
 
-const PlacesListScreen = () => {
+const PlacesListScreen = (props) => {
   const places = useSelector((state) => state.places.places);
   return (
     <FlatList

@@ -5,7 +5,6 @@ import NewPlaceScreen from "../screens/NewPlaceScreen";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import PlaceDetailScreen from "../screens/PlaceDetailScreen";
 
-
 const Stack = createStackNavigator();
 
 const PlacesNavigation = () => {
@@ -43,12 +42,12 @@ const PlacesNavigation = () => {
         <Stack.Screen
           name="PlaceDetailScreen"
           component={PlaceDetailScreen}
-          options={{
-            headerTitle: "PlaceDetailScreen",
+          options={({ route }) => ({
+            headerTitle: route.params.placeTitle,
             headerTitleStyle: {
               color: "blue", // Set the text color to blue
             },
-          }}
+          })}
         />
       </Stack.Navigator>
     </NavigationContainer>
