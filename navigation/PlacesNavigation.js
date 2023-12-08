@@ -3,6 +3,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import PlacesListScreen from "../screens/PlacesListScreen";
 import NewPlaceScreen from "../screens/NewPlaceScreen";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import PlaceDetailScreen from "../screens/PlaceDetailScreen";
+
 
 const Stack = createStackNavigator();
 
@@ -33,6 +35,16 @@ const PlacesNavigation = () => {
           component={NewPlaceScreen}
           options={{
             headerTitle: "Add Place",
+            headerTitleStyle: {
+              color: "blue", // Set the text color to blue
+            },
+          }}
+        />
+        <Stack.Screen
+          name="PlaceDetailScreen"
+          component={PlaceDetailScreen}
+          options={{
+            headerTitle: "PlaceDetailScreen",
             headerTitleStyle: {
               color: "blue", // Set the text color to blue
             },
