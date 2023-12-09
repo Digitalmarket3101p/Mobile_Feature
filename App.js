@@ -10,7 +10,13 @@ import thunkMiddleware from "redux-thunk";
 import placesReducer from "./store/places-reducer";
 import { Provider } from "react-redux";
 import { init } from "./helpers/db";
-
+init()
+  .then(() => {
+    console.log("initttt");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 const composedEnhancer = applyMiddleware(thunkMiddleware);
 const rootReducer = combineReducers({
   places: placesReducer,
@@ -25,20 +31,6 @@ const store = configureStore({
 });
 
 const App = () => {
-  useEffect(() => {
-    const initDatabase = async () => {
-      try {
-        await init();
-        console.log("Initialized database");
-      } catch (error) {
-        console.error(error);
-        console.log("DB initialization failed");
-      }
-    };
-
-    initDatabase();
-  }, []);
-
   return (
     <Provider store={store}>
       <PlacesNavigation />
