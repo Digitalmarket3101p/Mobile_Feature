@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, TextInput } from "react-native";
 import { useDispatch } from "react-redux";
 
 import Text from "../component/Text";
 import Button from "../component/Button";
-import Input from "../component/Input";
 import ImagePicker from "../component/ImagePicker";
 import LocationPicker from "../component/LocationPicker";
 import Place from "../models/Place";
@@ -15,6 +14,7 @@ import Colors from "../constants/Colors";
 const CreatePlaceScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
 
+  const [title, setTitle] = useState(""); // New state for title
   const [image, setImage] = useState("");
   const [imagePickerError, setImagePickerError] = useState("");
   const [location, setLocation] = useState(null);
@@ -25,7 +25,7 @@ const CreatePlaceScreen = ({ route, navigation }) => {
       setImagePickerError("Image is required.");
       return;
     }
-
+    console.log("location", location);
     if (!location) {
       setLocationPickerError("Location is required.");
       return;
@@ -34,7 +34,7 @@ const CreatePlaceScreen = ({ route, navigation }) => {
     dispatch(
       addPlace(
         new Place(
-          "Title",
+          title, // Use the title state here
           "eeewe",
           image,
           location.coords.latitude,
@@ -55,9 +55,15 @@ const CreatePlaceScreen = ({ route, navigation }) => {
           alignItems: "center",
         }}
       >
-        <View style={{ width: "70%", marginBottom: 70 }}>
+        <View style={{ width: "70%", height: "100%" }}>
           <Text size={2}>Create New Place</Text>
-          <Input name="title" label="Title" />
+          {/* Use TextInput to get title and update the state */}
+          <TextInput
+            style={styles.input} // You can style this TextInput as per your requirements
+            value={title}
+            onChangeText={(text) => setTitle(text)}
+            placeholder="Title"
+          />
           <ImagePicker onImageTake={setImage} />
           <Text style={{ color: Colors.danger }}>{imagePickerError}</Text>
           <LocationPicker
