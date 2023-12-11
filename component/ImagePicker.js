@@ -1,76 +1,71 @@
-import React, { useState, useEffect } from "react";
-import { Button, Image, StyleSheet, Text, View, Alert } from "react-native";
-import * as ImagePicker from "expo-image-picker";
+import React, { useState } from "react";
+import { View, Image, Alert } from "react-native";
+import * as ExpoImagePicker from "expo-image-picker";
+import * as Permissions from "expo-permissions";
+
+import Text from "./Text";
+import Button from "./Button";
+import styles from "../styles";
 import Colors from "../constants/Colors";
 
-const ImgPicker = (props) => {
-  const [pickedImage, setPickedImage] = useState();
+const ImagePicker = ({ onImageTake }) => {
+  const [image, setImage] = useState("");
 
-  useEffect(() => {
-    const requestCameraPermissions = async () => {
-      const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert("Sorry, we need camera permissions to make this work!", [
-          { text: "Okay" },
-        ]);
-      }
-    };
+  const grantPermission = async () => {
+    const result = await Permissions.askAsync(
+      Permissions.CAMERA,
+      Permissions.CAMERA_ROLL
+    );
 
-    requestCameraPermissions();
-  }, []);
+    if (result.status !== "granted") {
+      Alert.alert(
+        "Insufficient Permissions!",
+        "You need to grant camera permissions to use this app",
+        [{ text: "Okay!" }]
+      );
+      return false;
+    }
+
+    return true;
+  };
 
   const takeImageHandler = async () => {
-    let result = await ImagePicker.launchCameraAsync({
+    const isPermissionsGranted = await grantPermission();
+    if (!isPermissionsGranted) return;
+
+    const { canceled, uri } = await ExpoImagePicker.launchCameraAsync({
       allowsEditing: true,
-      aspect: [16, 9],
+      aspect: [4, 3],
       quality: 1,
     });
 
-    console.log(result);
-
-    if (!result.canceled) {
-      console.log("rrrr",result.uri);
-      setPickedImage(result.uri);
-      props.onImageTaken(result.uri);
+    if (!canceled) {
+      setImage(uri);
+      onImageTake(uri);
     }
   };
 
   return (
-    <View style={styles.imagePicker}>
-      <View style={styles.imagePreview}>
-        {pickedImage ? (
-          <Image style={styles.image} source={{ uri: pickedImage }} />
+    <View style={styles.picker}>
+      <View style={styles.preview}>
+        {image ? (
+          <Image
+            source={{
+              uri: image,
+            }}
+            style={styles.takenImage}
+          />
         ) : (
-          <Text>No image picked</Text>
+          <Text>You haven't taken any image yet.</Text>
         )}
       </View>
       <Button
-        title="Take Image"
-        color={Colors.primary}
+        title={`Take${image ? " Another" : ""} Image`}
+        color={1}
         onPress={takeImageHandler}
       />
     </View>
   );
 };
 
-export default ImgPicker;
-
-const styles = StyleSheet.create({
-  imagePicker: {
-    alignItems: "center",
-    marginBottom: 15,
-  },
-  imagePreview: {
-    width: "100%",
-    height: 200,
-    marginBottom: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    borderColor: "pink",
-    borderWidth: 1,
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-  },
-});
+export default ImagePicker;
