@@ -24,9 +24,9 @@ export const insertPlace = (title, imageUri, address, lat, lng) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        `INSERT INTO PLACES (title,imageUri,address,lat,lng) VALUES  (?,?,?,?,?);`,
+        `INSERT INTO places (title,imageUri,address,lat,lng) VALUES  (?,?,?,?,?);`,
         [title, imageUri, address, lat, lng],
-        (_,result) => {
+        (_, result) => {
           resolve(result);
         },
         (_, err) => {
@@ -35,4 +35,23 @@ export const insertPlace = (title, imageUri, address, lat, lng) => {
       );
     });
   });
+  return promise;
+};
+
+export const fetchPlaces = () => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        "SELECT * FROM places ",
+        [],
+        (_, result) => {
+          resolve(result);
+        },
+        (_, err) => {
+          reject(err); // Add this line to reject the promise in case of an error
+        }
+      );
+    });
+  });
+  return promise;
 };

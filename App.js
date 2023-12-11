@@ -1,51 +1,46 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect } from "react";
-import PlacesNavigation from "./navigation/PlacesNavigation";
-import {
-  configureStore,
-  combineReducers,
-  applyMiddleware,
-} from "@reduxjs/toolkit";
-import thunkMiddleware from "redux-thunk";
-import placesReducer from "./store/places-reducer";
-import { Provider } from "react-redux";
-import { init } from "./helpers/db";
+import React from 'react';
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+import { View } from 'react-native';
+import { useFonts } from 'expo-font';
+import thunk from 'redux-thunk';
 
-const composedEnhancer = applyMiddleware(thunkMiddleware);
-const rootReducer = combineReducers({
-  places: placesReducer,
-});
+import Navigator from './navigation/PlacesNavigation';
+import Loading from './component/Loading';
+import reducers from './reducers';
+import { init as initialDB } from './helpers/db';
+import styles from './styles';
+
+initialDB()
+  .then(() => {
+    console.log('DB initialized.');
+  })
+  .catch((err) => {
+    console.log('Failed initializing DB.');
+  });
+
 const store = configureStore({
-  reducer: rootReducer,
-  composedEnhancer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-    }),
+  reducer: reducers,
+//   middleware: getDefaultMiddleware => getDefaultMiddleware().concat(thunk),
 });
 
 const App = () => {
-  useEffect(() => {
-    const initDatabase = async () => {
-      try {
-        await init();
-        console.log("Initialized database");
-      } catch (error) {
-        console.error(error);
-        console.log("DB initialization failed");
-      }
-    };
+  let [isFontLoaded] = useFonts({
+    'source-sans-pro-italic': require('./assets/fonts/SourceSansPro-Italic.ttf'),
+    'source-sans-pro': require('./assets/fonts/SourceSansPro-Regular.ttf'),
+    'source-sans-pro-semi-bold': require('./assets/fonts/SourceSansPro-SemiBold.ttf'),
+    'source-sans-pro-semi-bold-italic': require('./assets/fonts/SourceSansPro-SemiBoldItalic.ttf'),
+  });
 
-    initDatabase();
-  }, []);
+  if (!isFontLoaded) return <Loading />;
 
   return (
     <Provider store={store}>
-      <PlacesNavigation />
+      <View style={styles.screen}>
+        <Navigator />
+      </View>
     </Provider>
   );
 };
 
 export default App;
-
-const styles = StyleSheet.create({});

@@ -1,43 +1,87 @@
+import React from "react";
 import * as FileSystem from "expo-file-system";
-
+import { Alert } from "react-native";
+import { insertPlace, fetchPlaces } from "../helpers/db";
 export const ADD_PLACE = "ADD_PLACE";
-import { insertPlace } from "../helpers/db";
+export const SET_PLACE = "SET_PLACE";
 
-export const addPlace = (title, image) => {
-  console.log(image);
-  return async (dispatch) => {
-    const fileName = image.split("/").pop();
-    const newPath = FileSystem.documentDirectory + fileName;
-    console.log("image", image);
-    console.log("newPath", newPath);
+import Place from "../models/place";
 
-    try {
-      const moveResult = await FileSystem.moveAsync({
-        from: image,
-        to: newPath,
-      });
-      console.log("move", moveResult);
+export const addPlace = (title, image) => async (dispatch) => {
+  const fileExt = image.split("/").pop();
+  const newPath = FileSystem.documentDirectory + fileExt;
 
-      // Check if the move was successful before proceeding
-      if (moveResult?.canceled === false) {
-        const dbResult = await insertPlace(
-          title,
-          newPath,
-          "dummy address",
-          15.6,
-          12.3
-        );
-        console.log("hello", dbResult);
-      } else {
-        console.log("Image move canceled or failed");
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  try {
+    await FileSystem.moveAsync({
+      to: newPath,
+      from: image,
+    });
 
+    const dbResult = await insertPlace(
+      title,
+      newPath,
+      "dummy address",
+      15.6,
+      12.3
+    );
+    console.log("hello", dbResult);
     dispatch({
       type: ADD_PLACE,
-      placeData: { title: title, image: newPath },
+      placeData: { id: dbResult.insertId, title: title, image: newPath },
     });
+  } catch (err) {
+    console.log("err", err);
+    Alert.alert(
+      "Something went wrong!",
+      "When we were trying to save the image you have taken something went wrong in saving it.",
+      [{ text: "Okay!" }]
+    );
+
+    return;
+  }
+};
+
+export const loadPlaces = () => {
+  return async (dispatch) => {
+    try {
+      const dbresult = await fetchPlaces();
+      console.log(dbresult);
+      dispatch({ type: SET_PLACE, places: dbresult.rows._array });
+    } catch (error) {
+      console.log("err", err);
+      Alert.alert(
+        "Something went wrong!",
+        "When we were trying to fetch the image Having Problem.",
+        [{ text: "Okay!" }]
+      );
+
+      return;
+    }
   };
+};
+export const getPlaces = () => async (dispatch) => {
+  dispatch(setLoading(true));
+
+  let places = [];
+
+  try {
+    const result = await getPlacesFromDB();
+
+    places = result.rows._array.map(
+      ({ id, title, address, image, lat, lon }) =>
+        new Place(title, address, image, lat, lon, id.toString())
+    );
+  } catch (err) {
+    Alert.alert(
+      "Something went wrong!",
+      "When we were trying to load places from the DB something went wrong in getting it.",
+      [{ text: "Okay!" }]
+    );
+
+    dispatch(setLoading(false));
+
+    return;
+  }
+
+  dispatch(setLoading(false));
 };
