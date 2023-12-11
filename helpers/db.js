@@ -13,6 +13,7 @@ export const init = () => {
         },
         (_, err) => {
           reject(err);
+          console.log("init err", err);
         }
       );
     });
