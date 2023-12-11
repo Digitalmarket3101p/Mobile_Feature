@@ -34,8 +34,8 @@ const CreatePlaceScreen = ({ route, navigation }) => {
     dispatch(
       addPlace(
         new Place(
-          formValues[formFields.title],
-          "",
+          "Title",
+          "eeewe",
           image,
           location.coords.latitude,
           location.coords.longitude

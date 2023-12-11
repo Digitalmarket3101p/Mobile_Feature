@@ -3,55 +3,54 @@ import * as SQLite from "expo-sqlite";
 const db = SQLite.openDatabase("places.db");
 
 export const init = () => {
-  const promise = new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        "CREATE TABLE IF NOT EXISTS places (id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL, imageUri TEXT NOT NULL, address TEXT NOT NULL, lat REAL NOT NULL, lng REAL NOT NULL);",
+        "CREATE TABLE IF NOT EXISTS places (id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL, address TEXT NOT NULL, image TEXT NOT NULL, lat REAL NOT NULL, lon REAL NOT NULL);",
         [],
         () => {
           resolve();
         },
         (_, err) => {
-          reject(err); // Add this line to reject the promise in case of an error
+          reject(err);
         }
       );
     });
   });
-
-  return promise; // Add this line to ensure the promise is returned
 };
-export const insertPlace = (title, imageUri, address, lat, lng) => {
-  const promise = new Promise((resolve, reject) => {
+
+export const insertPlace = ({ title, address, image, lat, lon }) => {
+  console.log("hello", title, address, image, lat, lon);
+  return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        `INSERT INTO places (title,imageUri,address,lat,lng) VALUES  (?,?,?,?,?);`,
-        [title, imageUri, address, lat, lng],
+        "INSERT INTO places (title, address, image, lat, lon) VALUES (?, ?, ?, ?, ?)",
+        [title, address, image, lat, lon],
         (_, result) => {
           resolve(result);
         },
         (_, err) => {
-          reject(err); // Add this line to reject the promise in case of an error
+          reject(err);
+          console.log("err", err);
         }
       );
     });
   });
-  return promise;
 };
 
-export const fetchPlaces = () => {
-  const promise = new Promise((resolve, reject) => {
+export const getPlaces = () => {
+  return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        "SELECT * FROM places ",
+        "SELECT * FROM places",
         [],
         (_, result) => {
           resolve(result);
         },
         (_, err) => {
-          reject(err); // Add this line to reject the promise in case of an error
+          reject(err);
         }
       );
     });
   });
-  return promise;
 };
