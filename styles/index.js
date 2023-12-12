@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
   },
   cardImage: {
-    width: 80,
+    width: 100,
     height: 80,
     backgroundColor: Colors.secondary,
   },
