@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Mobile-Feature",
-    "slug": "Mobile-Feature",
+    "name": "Great Places",
+    "slug": "great-places",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -30,8 +30,11 @@
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "CAMERA",
-        "WRITE_EXTERNAL_STORAGE"
-      ]
+        "WRITE_EXTERNAL_STORAGE",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "your.bundle.identifier"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -44,6 +47,11 @@
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "03136c89-f26f-4182-bba1-498878a627ee"
+      }
+    }
   }
 }
