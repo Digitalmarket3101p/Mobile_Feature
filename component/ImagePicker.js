@@ -4,7 +4,6 @@ import * as ImagePicker from "expo-image-picker";
 import Text from "./Text";
 import Button from "./Button";
 import styles from "../styles";
-import Colors from "../constants/Colors";
 
 const ImagePickerComponent = ({ onImageTake }) => {
   const [image, setImage] = useState("");
@@ -33,9 +32,14 @@ const ImagePickerComponent = ({ onImageTake }) => {
         quality: 1,
       });
 
-      if (!result.cancelled) {
-        setImage(result.uri);
-        onImageTake(result.uri);
+      if (!result.canceled) {
+        // Use 'assets' array to access selected assets
+        const selectedAssets = result.assets;
+        if (selectedAssets && selectedAssets.length > 0) {
+          const selectedImageUri = selectedAssets[0].uri;
+          setImage(selectedImageUri);
+          onImageTake(selectedImageUri);
+        }
       }
     } catch (error) {
       console.error("Image picker error:", error);
