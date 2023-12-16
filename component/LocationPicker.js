@@ -39,7 +39,14 @@ const LocationPicker = ({ onLocationSelect, navigate, route }) => {
 
   const getLocationHandler = async () => {
     const hasPermission = await getLocationPermission();
-    if (!hasPermission) return;
+    if (!hasPermission) {
+      // Permission not granted, show an alert
+      Alert.alert(
+        "Location Permission Required",
+        "You need to grant location permissions to use this feature.",
+        [{ text: "Okay", onPress: () => dispatch(setLoading(false)) }]
+      );
+    }
 
     dispatch(setLoading(true));
 
